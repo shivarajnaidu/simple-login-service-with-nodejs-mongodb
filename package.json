@@ -1,0 +1,33 @@
+{
+  "name": "simple-login-service-with-nodejs-mongodb",
+  "version": "1.0.0",
+  "description": "Simple Login Service Using NodeJs And MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shivarajnaidu/simple-login-service-with-nodejs-mongodb.git"
+  },
+  "keywords": [
+    "login"
+  ],
+  "author": "Yuvaraj V",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shivarajnaidu/simple-login-service-with-nodejs-mongodb/issues"
+  },
+  "homepage": "https://github.com/shivarajnaidu/simple-login-service-with-nodejs-mongodb#readme",
+  "dependencies": {
+    "bcrypt": "^2.0.1",
+    "body-parser": "^1.18.3",
+    "config": "^1.30.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.1.6",
+    "uuid": "^3.2.1"
+  }
+}
