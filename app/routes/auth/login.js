@@ -3,7 +3,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { User } = require('../../models');
+const { User, UserProfiles } = require('../../models');
+const { LocalProfile } = UserProfiles;
 const { PasswordServ, TokenServ } = require('../../lib');
 
 router.route('/')
@@ -15,28 +16,30 @@ router.route('/')
      */
 
     .post(async(req, res, next) => {
-        const { body } = req;
 
         const {
             email,
             password
-        } = body;
-
-        const query = {
-            email
-        };
-
+        } = req.body;
 
         try {
-            const user = await User.findOne(query).exec();
+            const user = await User.findOne({ email }).exec();
 
             if (!user) {
-                const error = new Error('Invalid Mobile No');
+                const error = new Error('User With Given Email ID Not Exist');
+                error.status = 400;
+                return next(error);
+            }
+
+            const profile = await LocalProfile.findOne({ userId: user.id }).exec();
+
+            if (profile.isEmailVerified) {
+                const error = new Error('You Should Verify Your Email ID To Login');
                 error.status = 401;
                 return next(error);
             }
 
-            const isCorrectPassword = await PasswordServ.match(password, user.password);
+            const isCorrectPassword = await PasswordServ.match(password, profile.password);
 
             if (!isCorrectPassword) {
                 const error = new Error('Incorrect Password');
@@ -44,17 +47,16 @@ router.route('/')
                 return next(error);
             }
 
-            const {
+            const tokenData = {
                 email,
-                id
-            } = user;
+                provider: profile.provider,
+                userId: user.id,
+                profileId: profile.id
+            };
 
-            const token = await TokenServ.generate({
-                email,
-                id
-            });
-            
+            const token = await TokenServ.generate(tokenData);
             res.json({ token });
+
         } catch (error) {
             next(error);
         }

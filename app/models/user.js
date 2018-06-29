@@ -13,12 +13,9 @@ const getRequiredFiledMessage = (filed) => {
 
 const UserSchema = new Schema({
   id: { type: String, default: uuid },
-  name: { type: String, required: getRequiredFiledMessage('Name'), trim: true },
-  email: { type: String, required: getRequiredFiledMessage('Email'), trim: true },
+  email: { type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true },
   role: { type: String, default: 'user', trim: true },
-  password: { type: String, required: getRequiredFiledMessage('Password'), trim: true },
-  isActive: { type: Boolean, default: true },
-  // isApproved: { type: Boolean, default: false }
+  isActive: { type: Boolean, default: true }
 }, options);
 
 

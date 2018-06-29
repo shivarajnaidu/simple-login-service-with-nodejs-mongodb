@@ -2,8 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
-
-const { User } = require('../../models');
+const { User, UserProfiles } = require('../../models');
+const { LocalProfile } = UserProfiles;
 const { PasswordServ } = require('../../lib');
 
 
@@ -29,28 +29,27 @@ router.route('/')
 
         try {
             const user = await User.findOne(query).exec();
-
-            if (user) {
-                const error = new Error('User With Same Name/Email Already Exist');
-                error.status = 409;
-                return next(error);
-            }
-
-            let data = {
+            const newUser = new User({
                 email,
-                name
+                role
+            });
+
+            const result = await newUser.save();
+            const userId = result.id;
+            const password = await PasswordServ.hash(body.password);
+
+            const profileData = {
+                userId,
+                name,
+                password
             };
 
-            if (role) {
-                data = Object.assign({}, data, { role });
-            }
+            const profile = new LocalProfile(profileData);
+            await profile.save();
+            res.json({
+                message: 'Verification Email Sent To Your Email Id.. Please Verify Your Email By Clicking The Verification Link'
+            });
 
-            const password = await PasswordServ.hash(body.password);
-            data = Object.assign({}, data, { password })
-
-            const newUser = new User(data);
-            const result = await newUser.save();
-            res.json(result);
         } catch (error) {
             next(error);
         }

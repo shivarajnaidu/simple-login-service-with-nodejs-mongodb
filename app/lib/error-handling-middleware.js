@@ -1,7 +1,7 @@
 'use strict';
 
 function errorHandlingMiddleware(error, req, res, next) {
-    // console.error(error);
+    console.error(error);
     if (error.name === 'ValidationError') {
         const keys = Object.keys(error.errors);
         const errorMessages = keys
@@ -11,6 +11,10 @@ function errorHandlingMiddleware(error, req, res, next) {
 
         error.message = errorMessages;
         error.status = 400;
+    }
+
+    if (error.name === 'MongoError' && error.code === 11000) {
+        error.status = 409;
     }
 
     const { status = 500, message = 'Something Went Wrong' } = error;

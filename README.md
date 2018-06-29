@@ -16,7 +16,7 @@ PORT: default port is 3000
 
 ```json
 {
-    "role": "user", // Optional Param.. (Default Value Is "user")
+    "role": "user",
     "name": "yuvaraj",
     "email": "shivarajnaidu@gmail.com",
     "password": "testpassword"
@@ -27,16 +27,7 @@ PORT: default port is 3000
 
 ```json
 {
-    "role": "user",
-    "isActive": true,
-    "_id": "5b2cd875a2254736588cbff5",
-    "email": "shivarajnaidu@gmail.com",
-    "name": "yuvaraj",
-    "password": "$2b$10$SEYSJa6txYwM5MmEx0wP3.uZmLtzQhcBbJXFpXagCpEjsIxuh067W",
-    "id": "a4db60bb-e9cb-4573-9528-404a6305aca3",
-    "createdAt": "2018-06-22T11:07:33.851Z",
-    "updatedAt": "2018-06-22T11:07:33.851Z",
-    "__v": 0
+    "message": "Verification Email Sent To Your Email Id.. Please Verify Your Email By Clicking The Verification Link"
 }
 ```
 
@@ -55,6 +46,6 @@ PORT: default port is 3000
 
 ```json
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaXZhcmFqbmFpZHVAZ21haWwuY29tIiwiaWQiOiJhNGRiNjBiYi1lOWNiLTQ1NzMtOTUyOC00MDRhNjMwNWFjYTMiLCJpYXQiOjE1Mjk2NjU3NjksImV4cCI6MTUyOTY2OTM2OX0.m4-fHQ0-cv0slbC-GGMOBrQZY4ngmTm3eh7RLcJjyDw"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaXZhcmFqbmFpZHVAZ21haWwuY29tIiwicHJvdmlkZXIiOiJsb2NhbCIsInVzZXJJZCI6IjhlODc4NmZjLWU5MmQtNGM2NC1hYmI4LTg0MTgzMzgyNDYzNCIsInByb2ZpbGVJZCI6ImFkNGFhZjE3LWY5YjEtNDM3MS1iNzU0LWQzYmFlZDUxOTVhMCIsImlhdCI6MTUzMDI3NDY1MCwiZXhwIjoxNTMwMjc4MjUwfQ.NJjZeMnMB3bPsSTAbFkQy3N8dTHyretRHB3ii1LWVqM"
 }
 ```
