@@ -13,9 +13,11 @@ async function send(to, mailOptions) {
 		throw new Error('To Address Should Not Be Empty');
 	}
 
-	const message = Object.assign({}, defaultOptions, mailOptions);
+	const message = Object.assign({}, defaultOptions, mailOptions, { to });
     return sgMail.send(message);
 }
 
 
-module.exports = send;
+module.exports = {
+	send
+};

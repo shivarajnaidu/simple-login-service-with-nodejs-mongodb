@@ -17,7 +17,8 @@ const LocalProfileSchema = new Schema({
   name: { type: String, required: getRequiredFiledMessage('Name') },
   password: { type: String, required: getRequiredFiledMessage('Password') },
   isEmailVerified: { type: Boolean, default: false },
-  provider: { type: String, default: 'local' }
+  provider: { type: String, default: 'local' },
+  otp: String
 }, options);
 
 
