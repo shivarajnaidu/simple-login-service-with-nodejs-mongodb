@@ -6,6 +6,10 @@ function getTemplate(url) {
     const template = `
     <p> Click The Following Link To Verify Your Account.. 
       <a href="${url}">Click To Verify Your Account</a>
+
+      <br/>
+      or Just Copy Paste the below text...
+      <b>${url}</b>
     </p>
 `;
 
