@@ -5,13 +5,48 @@ const express = require('express');
 const router = express.Router();
 const { User, UserProfiles } = require('../../models');
 const { LocalProfile } = UserProfiles;
-const { PasswordServ } = require('../../lib');
+const { PasswordServ, TokenServ } = require('../../lib');
 
 const {
     NewAccountVerification
 } = require('../../helpers/mail');
 
+const inValidLinkError = (next, message = 'Invalid Link') => {
+    const error = new Error(message);
+    error.status = 400;
+    return next(error);
+}
+
 router.route('/')
+
+    .get(async(req, res, next) => {
+        const { verify, otp: otpToken } = req.query;
+        if (!(verify === 'account') || !otpToken) {
+            return inValidLinkError(next);
+        }
+
+        const updateObj = {
+            otp: undefined,
+            isEmailVerified: true
+        };
+
+        try {
+            const { otp } = await TokenServ.verify(otpToken);
+            const user = await LocalProfile.findOne({ otp }).exec();
+            if (!user || !user.otp) {
+                const message = 'Invalid Link / Link Expired';
+                return inValidLinkError(next, message);
+            }
+
+            Object.assign(user, updateObj);
+            await user.save();
+            res.json({ message: 'Your Account Has Been Verified Successfully.. You Can Login Now..' });
+        } catch (error) {
+            next(error);
+        }
+
+
+    })
 
 
     /**
@@ -27,7 +62,7 @@ router.route('/')
         } = body;
 
         const query = {
-        	email
+            email
         };
 
 
@@ -49,9 +84,13 @@ router.route('/')
                 otp
             };
 
+            const otpToken = TokenServ.generate({ otp });
+
             const profile = new LocalProfile(profileData);
             await profile.save();
-            NewAccountVerification.send(otp, email);
+            NewAccountVerification.send(await otpToken, email)
+                .then(data => {})
+                .catch(error => console.error(error));
 
             res.json({
                 message: 'Verification Email Sent To Your Email Id.. Please Verify Your Email By Clicking The Verification Link'

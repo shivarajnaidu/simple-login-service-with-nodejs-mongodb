@@ -4,10 +4,11 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const {
     secret: jwtSecret,
-    tokenExpirePeriod: expiresIn
+    tokenExpirePeriod
 } = config.get('jwt');
 
-async function generateToken(payLoad) {
+async function generateToken(payLoad, expiry) {
+    const expiresIn = expiry || tokenExpirePeriod;
     const isObject = (typeof payLoad === 'object');
 
     if (!payLoad) {

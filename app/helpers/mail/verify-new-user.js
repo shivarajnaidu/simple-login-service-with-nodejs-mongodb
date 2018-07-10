@@ -18,19 +18,20 @@ function getTemplate(url) {
 
 
 
-async function send(otp, email) {
+async function send(otpToken, email) {
+    const otp = otpToken;
     const params = new URLSearchParams({
         otp,
-        action: 'verify-email'
+        verify: 'account'
     });
 
-    const url = new URL('http://localhost:3000/users/profile/');
+    const url = new URL('http://localhost:3000/api/auth/signup');
     url.search = params.toString();
     const html = getTemplate(url.href);
-    SendMail.send(email, {
+    return SendMail.send(email, {
         html,
         subject: 'Email Verification'
-    })
+    });
 }
 
 
