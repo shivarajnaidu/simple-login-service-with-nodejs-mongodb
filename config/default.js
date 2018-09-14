@@ -17,6 +17,11 @@ const config = {
 
 	IP: '0.0.0.0',
 
+	HOST_ADDR: {
+		ui: 'http://localhost:4000'
+	},
+
+	PASSWORD_RESET_PATH: '/reset-password'
 };
 
 module.exports = config;

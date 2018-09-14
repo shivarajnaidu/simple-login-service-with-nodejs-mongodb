@@ -6,37 +6,47 @@ const {
 
 
 class EmailNotFoundError extends BadRequestError {
-	constructor(message) {
-		super()
-		this.message = 'Email Not Found';
+	constructor(message = 'Email Not Found') {
+		super(message)
 	}
 }
 
 
 class UserNotFoundError extends BadRequestError {
-	constructor(message) {
-		super()
-		this.message = 'User Not Found';
+	constructor(message = 'User Not Found') {
+		super(message)
 	}
 }
 
-class IncorrectPassword extends BadRequestError {
-	constructor(message) {
-		super()
-		this.message = 'Incorrect Password';
+class IncorrectPasswordError extends BadRequestError {
+	constructor(message = 'Incorrect Password') {
+		super(message)
 	}
 }
 
-class UserAlreadyExist extends BadRequestError {
-	constructor(message) {
-		super()
-		this.message = 'User Already Exist';
+class UserAlreadyExistError extends BadRequestError {
+	constructor(message = 'User Already Exist') {
+		super(message)
+	}
+}
+
+class EmailNotVerifiedError extends BadRequestError {
+	constructor(message = 'You Should Verify Your Email ID To Login') {
+		super(message)
+	}
+}
+
+class InvalidLinkError extends BadRequestError {
+	constructor(message = 'Invalid Link / Link Expired') {
+		super(message)
 	}
 }
 
 module.exports = {
 	EmailNotFoundError,
 	UserNotFoundError,
-	IncorrectPassword,
-	UserAlreadyExist
+	IncorrectPasswordError,
+	UserAlreadyExistError,
+	EmailNotVerifiedError,
+	InvalidLinkError
 };

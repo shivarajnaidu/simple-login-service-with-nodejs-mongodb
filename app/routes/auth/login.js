@@ -6,6 +6,11 @@ const router = express.Router();
 const { User, UserProfiles } = require('../../models');
 const { LocalProfile } = UserProfiles;
 const { PasswordServ, TokenServ } = require('../../lib');
+const {
+    UserNotFoundError,
+    EmailNotVerifiedError,
+    IncorrectPasswordError
+} = require('../../errors');
 
 router.route('/')
 
@@ -26,24 +31,22 @@ router.route('/')
             const user = await User.findOne({ email }).exec();
 
             if (!user) {
-                const error = new Error('User With Given Email ID Not Exist');
-                error.status = 400;
+                const error = new UserNotFoundError();
                 return next(error);
             }
 
             const profile = await LocalProfile.findOne({ userId: user.id }).exec();
-
-            if (profile.isEmailVerified) {
-                const error = new Error('You Should Verify Your Email ID To Login');
-                error.status = 401;
+            
+            // If Email Is Not Verified 
+            if (!profile.isEmailVerified) {
+                const error = new EmailNotVerifiedError();
                 return next(error);
             }
 
             const isCorrectPassword = await PasswordServ.match(password, profile.password);
 
             if (!isCorrectPassword) {
-                const error = new Error('Incorrect Password');
-                error.status = 401;
+                const error = new IncorrectPasswordError();
                 return next(error);
             }
 
@@ -51,6 +54,7 @@ router.route('/')
                 email,
                 provider: profile.provider,
                 userId: user.id,
+                role: user.role,
                 profileId: profile.id
             };
 

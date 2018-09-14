@@ -7,25 +7,21 @@ const { User, UserProfiles } = require('../../models');
 const { LocalProfile } = UserProfiles;
 const { PasswordServ, TokenServ } = require('../../lib');
 const {
-    UserAlreadyExist
+    UserAlreadyExistError,
+    InvalidLinkError
 } = require('../../errors');
 
 const {
     NewAccountVerification
 } = require('../../helpers/mail');
 
-const inValidLinkError = (next, message = 'Invalid Link') => {
-    const error = new Error(message);
-    error.status = 400;
-    return next(error);
-}
-
 router.route('/')
 
     .get(async(req, res, next) => {
-        const { verify, otp: otpToken } = req.query;
-        if (!(verify === 'account') || !otpToken) {
-            return inValidLinkError(next);
+        const { otp: otpToken } = req.query;
+        if (!otpToken) {
+            const error = new InvalidLinkError();
+            return next(error);
         }
 
         const updateObj = {
@@ -37,8 +33,8 @@ router.route('/')
             const { otp } = await TokenServ.verify(otpToken);
             const user = await LocalProfile.findOne({ otp }).exec();
             if (!user || !user.otp) {
-                const message = 'Invalid Link / Link Expired';
-                return inValidLinkError(next, message);
+                const error = new InvalidLinkError();
+                return next(error);
             }
 
             Object.assign(user, updateObj);
@@ -73,7 +69,7 @@ router.route('/')
             
             // If User With Given Email ID Already Exists Send Error Response
             if (user) {
-                const error = new UserAlreadyExist();
+                const error = new UserAlreadyExistError();
                 return next(error);
             }
 
