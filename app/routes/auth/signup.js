@@ -6,6 +6,9 @@ const router = express.Router();
 const { User, UserProfiles } = require('../../models');
 const { LocalProfile } = UserProfiles;
 const { PasswordServ, TokenServ } = require('../../lib');
+const {
+    UserAlreadyExist
+} = require('../../errors');
 
 const {
     NewAccountVerification
@@ -58,7 +61,6 @@ router.route('/')
         const {
             email,
             name,
-            role
         } = body;
 
         const query = {
@@ -68,12 +70,16 @@ router.route('/')
 
         try {
             const user = await User.findOne(query).exec();
-            const newUser = new User({
-                email,
-                role
-            });
+            
+            // If User With Given Email ID Already Exists Send Error Response
+            if (user) {
+                const error = new UserAlreadyExist();
+                return next(error);
+            }
 
+            const newUser = new User({ email });
             const result = await newUser.save();
+            
             const userId = result.id;
             const password = await PasswordServ.hash(body.password);
             const otp = uuid();
@@ -85,9 +91,9 @@ router.route('/')
             };
 
             const otpToken = TokenServ.generate({ otp });
-
             const profile = new LocalProfile(profileData);
             await profile.save();
+
             NewAccountVerification.send(await otpToken, email)
                 .then(data => {})
                 .catch(error => console.error(error));

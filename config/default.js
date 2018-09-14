@@ -2,7 +2,7 @@
 
 const config = {
 	db: {
-		uri: 'mongodb://localhost/test'
+		uri: 'mongodb://localhost:27017/test'
 	},
 
 	// JWT Secret
@@ -11,15 +11,11 @@ const config = {
 		tokenExpirePeriod: (60 * 60 * 1)  // 1 day
 	},
 
-	// Node MAiler
-	nodemailer: {
-		user: 'example@gmail.com',
-		password: 'example'
-	},
-
 	// NODE ENV VARIABLES
 
-	PORT: process.env.PORT || 3000
+	PORT: process.env.PORT || 3000,
+
+	IP: '0.0.0.0',
 
 };
 
