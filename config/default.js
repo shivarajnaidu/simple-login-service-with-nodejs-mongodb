@@ -11,6 +11,12 @@ const config = {
 		tokenExpirePeriod: (60 * 60 * 1)  // 1 day
 	},
 
+	google: {
+		clientId: process.env.GOOGLE_CLIENT_ID,
+		secret: process.env.GOOGLE_CLIENT_SECRET,
+		callbackURL: 'http://localhost:3000/api/auth/google/callback'
+	},
+
 	// NODE ENV VARIABLES
 
 	PORT: process.env.PORT || 3000,
