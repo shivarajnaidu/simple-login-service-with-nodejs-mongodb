@@ -6,7 +6,7 @@ const options = {
   timestamps: true
 };
 
-const getRequiredFiledMessage = (filed) => {
+const getRequiredFiledMessage = filed => {
     const message = `${filed} Should Not Be Empty`;
     return [true, message];
 };

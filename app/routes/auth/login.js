@@ -2,6 +2,8 @@
 
 const express = require('express');
 const router = express.Router();
+const userIP = require('user-ip');
+
 
 const { User, UserProfiles } = require('../../models');
 const { LocalProfile } = UserProfiles;
@@ -21,6 +23,9 @@ router.route('/')
      */
 
     .post(async(req, res, next) => {
+        const loginIp = userIP(req);
+        const currentLogin = Date.now();
+        const currentLoginProvider = 'local';
 
         const {
             email,
@@ -28,7 +33,7 @@ router.route('/')
         } = req.body;
 
         try {
-            const user = await User.findOne({ email }).exec();
+            const user = await User.findOne({ email, isDeleted: false }).exec();
 
             if (!user) {
                 const error = new UserNotFoundError();
@@ -39,6 +44,8 @@ router.route('/')
             
             // If Email Is Not Verified 
             if (!profile.isEmailVerified) {
+                Object.assign(user, { lastFailedLogin: Date.now() });
+                await user.save();
                 const error = new EmailNotVerifiedError();
                 return next(error);
             }
