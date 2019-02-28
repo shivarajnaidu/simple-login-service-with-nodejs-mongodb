@@ -22,7 +22,7 @@ router.route('/')
      * 
      */
 
-    .post(async(req, res, next) => {
+    .post(async (req, res, next) => {
         const loginIp = userIP(req);
         const currentLogin = Date.now();
         const currentLoginProvider = 'local';
@@ -33,17 +33,17 @@ router.route('/')
         } = req.body;
 
         try {
-            const user = await User.findOne({ email, isDeleted: false }).exec();
+            const user = await User.findOne({ email, isDeleted: false, isActive: true }).exec();
 
             if (!user) {
                 const error = new UserNotFoundError();
                 return next(error);
             }
 
-            const profile = await LocalProfile.findOne({ userId: user.id }).exec();
-            
+            const profile = user.profiles.find(profile => profile.provider === 'local');
+
             // If Email Is Not Verified 
-            if (!profile.isEmailVerified) {
+            if (profile && !profile.isEmailVerified) {
                 Object.assign(user, { lastFailedLogin: Date.now() });
                 await user.save();
                 const error = new EmailNotVerifiedError();
