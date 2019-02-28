@@ -1,14 +1,14 @@
 'use strict';
 
-const uuid = require('uuid');
+const uuid = require('uuid/v4');
 const express = require('express');
 const router = express.Router();
-const { User, UserProfiles } = require('../../models');
-const { LocalProfile } = UserProfiles;
+const { User } = require('../../models');
 const { PasswordServ, TokenServ } = require('../../lib');
 const {
     UserAlreadyExistError,
-    InvalidLinkError
+    InvalidLinkError,
+    UserNotFoundError
 } = require('../../errors');
 
 const {
@@ -17,8 +17,8 @@ const {
 
 router.route('/')
 
-    .get(async(req, res, next) => {
-        const { otp: otpToken } = req.query;
+    .get(async (req, res, next) => {
+        const { otp: otpToken, email } = req.query;
         if (!otpToken) {
             const error = new InvalidLinkError();
             return next(error);
@@ -31,15 +31,26 @@ router.route('/')
 
         try {
             const { otp } = await TokenServ.verify(otpToken);
-            const user = await LocalProfile.findOne({ otp }).exec();
-            if (!user || !user.otp) {
+            const user = await User.findOne({ email }).exec();
+            if (!user) {
+                const error = new UserNotFoundError();
+                return next(error);
+            }
+
+            const localProfile = user.profiles.find(profile => profile.provider === 'local');
+
+            if (!localProfile || !localProfile.otp) {
                 const error = new InvalidLinkError();
                 return next(error);
             }
 
-            Object.assign(user, updateObj);
-            await user.save();
-            res.json({ message: 'Your Account Has Been Verified Successfully.. You Can Login Now..' });
+            if (localProfile.otp === otp) {
+                Object.assign(localProfile, updateObj)
+                user.markModified('profiles');
+                await user.save();
+                res.json({ message: 'Your Account Has Been Verified Successfully.. You Can Login Now..' });
+            }
+
         } catch (error) {
             next(error);
         }
@@ -52,46 +63,38 @@ router.route('/')
      * Register New User
      */
 
-    .post(async(req, res, next) => {
+    .post(async (req, res, next) => {
         const { body } = req;
         const {
             email,
             name,
         } = body;
 
-        const query = {
-            email
-        };
-
-
         try {
-            const user = await User.findOne(query).exec();
-            
+            const user = await User.findOne({ email }).exec();
+
             // If User With Given Email ID Already Exists Send Error Response
             if (user) {
                 const error = new UserAlreadyExistError();
                 return next(error);
             }
 
-            const newUser = new User({ email });
-            const result = await newUser.save();
-            
-            const userId = result.id;
             const password = await PasswordServ.hash(body.password);
             const otp = uuid();
-            const profileData = {
-                userId,
+            const localProfile = {
                 name,
                 password,
-                otp
+                otp,
+                provider: 'local',
+                isEmailVerified: false,
             };
 
-            const otpToken = TokenServ.generate({ otp });
-            const profile = new LocalProfile(profileData);
-            await profile.save();
+            const newUser = new User({ email, profiles: [localProfile] });
+            await newUser.save();
 
+            const otpToken = TokenServ.generate({ otp });
             NewAccountVerification.send(await otpToken, email)
-                .then(data => {})
+                .then(data => { })
                 .catch(error => console.error(error));
 
             res.json({

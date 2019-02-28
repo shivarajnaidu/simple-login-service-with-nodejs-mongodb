@@ -22,6 +22,7 @@ async function send(otpToken, email) {
     const otp = otpToken;
     const params = new URLSearchParams({
         otp,
+        email,
         verify: 'account'
     });
 
