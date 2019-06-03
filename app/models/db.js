@@ -7,13 +7,16 @@ const dbURL = config.get('db.uri');
 
 async function connectToDB() {
     try {
-        await mongoose.connect(dbURL);
+        await mongoose.connect(dbURL, {
+            useCreateIndex: true,
+            useNewUrlParser: true
+        });
         console.log('Succefully Connected To DB');
     } catch (error) {
         console.error('Database Connection Failed');
         process.exit(1);
     }
-    
+
 }
 
 connectToDB();
