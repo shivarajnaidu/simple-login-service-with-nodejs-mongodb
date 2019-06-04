@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const uuid = require('uuid/v4');
 const { Otp } = require('../models');
 const TokenServ = require('./token');
