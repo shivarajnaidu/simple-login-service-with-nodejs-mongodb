@@ -1,8 +1,7 @@
-'use strict';
 require('dotenv').config();
 const config = require('config');
 const express = require('express');
-const helmet = require('helmet')
+const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -21,9 +20,9 @@ app.use(bodyParser.json());
 require('./app/routes')(app);
 
 const onServerStart = () => {
-    const ENVIROINMENT = process.env.NODE_ENV || 'development';
-    const message = `Server Listening On Port ${PORT}, ENVIROINMENT=${ENVIROINMENT}`;
-    console.log(message);
+  const ENVIROINMENT = process.env.NODE_ENV || 'development';
+  const message = `Server Listening On Port ${PORT}, ENVIROINMENT=${ENVIROINMENT}`;
+  console.log(message);
 };
 
 app.listen(PORT, IP, onServerStart);

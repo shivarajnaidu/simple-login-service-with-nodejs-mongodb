@@ -1,109 +1,112 @@
-'use strict';
+/* eslint-disable no-console */
+/* eslint-disable consistent-return */
+
 
 const uuid = require('uuid');
 const express = require('express');
+
 const router = express.Router();
-const { User, UserProfiles } = require('../../models');
-const { LocalProfile } = UserProfiles;
-const { PasswordServ, TokenServ } = require('../../lib');
+const { User, UnVerifiedAccount } = require('../../models');
+const { PasswordServ, TokenServ, OtpServ } = require('../../lib');
 const {
-    UserAlreadyExistError,
-    InvalidLinkError
+  UserAlreadyExistError,
+  InvalidLinkError,
 } = require('../../errors');
 
 const {
-    NewAccountVerification
+  NewAccountVerification,
 } = require('../../helpers/mail');
+
+
+const findUser = (req) => {
+  const {
+    email,
+    mobile,
+  } = req.body;
+
+  if (mobile) {
+    return User.findOne({ mobile }).exec();
+  }
+
+  if (email) {
+    return User.findOne({ email }).exec();
+  }
+};
 
 router.route('/')
 
-    .get(async(req, res, next) => {
-        const { otp: otpToken } = req.query;
-        if (!otpToken) {
-            const error = new InvalidLinkError();
-            return next(error);
-        }
+  // .get(async (req, res, next) => {
+  //   const { otp: otpToken } = req.query;
+  //   if (!otpToken) {
+  //     const error = new InvalidLinkError();
+  //     return next(error);
+  //   }
 
-        const updateObj = {
-            otp: undefined,
-            isEmailVerified: true
-        };
+  //   const updateObj = {
+  //     otp: undefined,
+  //     isEmailVerified: true,
+  //   };
 
-        try {
-            const { otp } = await TokenServ.verify(otpToken);
-            const user = await LocalProfile.findOne({ otp }).exec();
-            if (!user || !user.otp) {
-                const error = new InvalidLinkError();
-                return next(error);
-            }
+  //   try {
+  //     const { otp } = await TokenServ.verify(otpToken);
+  //     const user = await LocalProfile.findOne({ otp }).exec();
+  //     if (!user || !user.otp) {
+  //       const error = new InvalidLinkError();
+  //       return next(error);
+  //     }
 
-            Object.assign(user, updateObj);
-            await user.save();
-            res.json({ message: 'Your Account Has Been Verified Successfully.. You Can Login Now..' });
-        } catch (error) {
-            next(error);
-        }
-
-
-    })
+  //     Object.assign(user, updateObj);
+  //     await user.save();
+  //     res.json({ message: 'Your Account Has Been Verified Successfully.. You Can Login Now..' });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // })
 
 
-    /**
-     * Register New User
-     */
+  /**
+      * Register New User
+      */
 
-    .post(async(req, res, next) => {
-        const { body } = req;
-        const {
-            email,
-            name,
-        } = body;
+  .post(async (req, res, next) => {
+    const { body } = req;
+    const {
+      email,
+      mobile,
+      name,
+    } = body;
 
-        const query = {
-            email
-        };
+    try {
+      const user = await findUser(req);
 
+      // If User With Given Email ID Already Exists Send Error Response
+      if (user) {
+        const error = new UserAlreadyExistError();
+        return next(error);
+      }
 
-        try {
-            const user = await User.findOne(query).exec();
-            
-            // If User With Given Email ID Already Exists Send Error Response
-            if (user) {
-                const error = new UserAlreadyExistError();
-                return next(error);
-            }
+      const password = await PasswordServ.hash(body.password);
 
-            const newUser = new User({ email });
-            const result = await newUser.save();
-            
-            const userId = result.id;
-            const password = await PasswordServ.hash(body.password);
-            const otp = uuid();
-            const profileData = {
-                userId,
-                name,
-                password,
-                otp
-            };
+      const newUser = new UnVerifiedAccount({
+        email,
+        name,
+        mobile,
+        password,
+      });
+      const result = await newUser.save();
+      const userId = result.id;
 
-            const otpToken = TokenServ.generate({ otp });
-            const profile = new LocalProfile(profileData);
-            await profile.save();
+      if (email) {
+        OtpServ.sendEmailVerification(userId, email);
+      }
 
-            NewAccountVerification.send(await otpToken, email)
-                .then(data => {})
-                .catch(error => console.error(error));
-
-            res.json({
-                message: 'Verification Email Sent To Your Email Id.. Please Verify Your Email By Clicking The Verification Link'
-            });
-
-        } catch (error) {
-            next(error);
-        }
-
-    })
-
+      res.json({
+        message: 'Verification Email Sent To Your Email Id.. Please Verify Your Email By Clicking The Verification Link',
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 
 module.exports = router;
