@@ -36,5 +36,9 @@
     "passport-google-oauth": "^2.0.0",
     "user-ip": "^1.0.1",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.13.0"
   }
 }
