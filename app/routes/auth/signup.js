@@ -1,112 +1,51 @@
-'use strict';
-
-const uuid = require('uuid/v4');
 const express = require('express');
-const router = express.Router();
-const { User } = require('../../models');
-const { PasswordServ, TokenServ } = require('../../lib');
-const {
-    UserAlreadyExistError,
-    InvalidLinkError,
-    UserNotFoundError
-} = require('../../errors');
 
+const router = express.Router();
+const { User, UnVerifiedAccount, OtpList } = require('../../models');
+const { PasswordServ, OtpServ } = require('../../lib');
 const {
-    NewAccountVerification
-} = require('../../helpers/mail');
+  UserAlreadyExistError,
+} = require('../../errors');
 
 router.route('/')
 
-    .get(async (req, res, next) => {
-        const { otp: otpToken, email } = req.query;
-        if (!otpToken) {
-            const error = new InvalidLinkError();
-            return next(error);
-        }
+/**
+       * Register New User
+       */
 
-        const updateObj = {
-            otp: undefined,
-            isEmailVerified: true
-        };
+  .post(async (req, res, next) => {
+    const { body } = req;
+    const {
+      email,
+      name,
+    } = body;
 
-        try {
-            const { otp } = await TokenServ.verify(otpToken);
-            const user = await User.findOne({ email }).exec();
-            if (!user) {
-                const error = new UserNotFoundError();
-                return next(error);
-            }
+    try {
+      const user = await User.findOne({ email }).exec();
 
-            const localProfile = user.profiles.find(profile => profile.provider === 'local');
+      // If User With Given Email ID Already Exists Send Error Response
+      if (user) {
+        const error = new UserAlreadyExistError();
+        return next(error);
+      }
 
-            if (!localProfile || !localProfile.otp) {
-                const error = new InvalidLinkError();
-                return next(error);
-            }
+      const password = await PasswordServ.hash(body.password);
+      const newUser = new UnVerifiedAccount({
+        email, password, name,
+      });
+      const result = await newUser.save();
 
-            if (localProfile.otp === otp) {
-                Object.assign(localProfile, updateObj)
-                user.markModified('profiles');
-                await user.save();
-                res.json({ message: 'Your Account Has Been Verified Successfully.. You Can Login Now..' });
-            }
+      const otpDoc = new OtpList({ userId: result.id, type: 'new_account_verification' });
+      const otpResult = await otpDoc.save();
 
-        } catch (error) {
-            next(error);
-        }
-
-
-    })
-
-
-    /**
-     * Register New User
-     */
-
-    .post(async (req, res, next) => {
-        const { body } = req;
-        const {
-            email,
-            name,
-        } = body;
-
-        try {
-            const user = await User.findOne({ email }).exec();
-
-            // If User With Given Email ID Already Exists Send Error Response
-            if (user) {
-                const error = new UserAlreadyExistError();
-                return next(error);
-            }
-
-            const password = await PasswordServ.hash(body.password);
-            const otp = uuid();
-            const localProfile = {
-                name,
-                password,
-                otp,
-                provider: 'local',
-                isEmailVerified: false,
-            };
-
-            const newUser = new User({ email, profiles: [localProfile] });
-            await newUser.save();
-
-            const otpToken = TokenServ.generate({ otp });
-            NewAccountVerification.send(await otpToken, email)
-                .then(data => { })
-                .catch(error => console.error(error));
-
-            res.json({
-                message: 'Verification Email Sent To Your Email Id.. Please Verify Your Email By Clicking The Verification Link'
-            });
-
-        } catch (error) {
-            next(error);
-        }
-
-    })
-
-
+      await OtpServ.sendOtp(otpResult.otp, { email });
+      res.json({
+        uid: otpResult.id,
+        message: 'Otp Sent To Your Registered Email',
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 module.exports = router;
