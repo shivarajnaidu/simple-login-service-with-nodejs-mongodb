@@ -40,7 +40,7 @@ function authorize(role = ROLES.user) {
             req.tokenData = decodedData;
             const actualRole = decodedData.role;
             if (!hasPermission(requiredRole, actualRole)) {
-                const error = new Error('You Don\'t Have Permission To Proceed');
+                const error = new Error(`You Don't Have Permission To Proceed`);
                 error.status = 401;
                 return next(error);
             }

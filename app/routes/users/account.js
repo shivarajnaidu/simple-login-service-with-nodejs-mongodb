@@ -1,38 +1,20 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const { User, UserProfiles } = require('../../models');
-const { LocalProfile, FBProfile, GoogleProfile } = UserProfiles;
+const { User } = require('../../models');
 const { PasswordServ, AuthServ } = require('../../lib');
 const { ROLES, hasPermission } = AuthServ;
 
-function getRequiredProfiles(userId, profiles = '') {
-	if (!profiles) {
-		return [];
-	}
-
-	const ProfileTypes = {
-		local: LocalProfile,
-		fb: FBProfile,
-		google: GoogleProfile
-	};
-	const requiredProfiles = profiles.split(',')
-		.map(profileKey => ProfileTypes[profileKey])
-		.map(profileModel => profileModel.findOne({ userId }, { password: false }).exec());
-	return requiredProfiles;
-
-}
-
-
-
+const removePassword = { 'profiles.password': 0 };
+const projection = Object.assign({}, removePassword)
 router.route('/')
 
 	.get(async (req, res, next) => {
 		const query = { isDeleted: false };
 		Object.assign(query, req.query);
 		try {
-			const user = await User.find(query).exec();
-			res.json(user);
+			const users = await User.find(query, projection);
+			res.json(users);
 		} catch (error) {
 			next(error);
 		}
@@ -46,7 +28,7 @@ router.route('/')
 		const {
 			email,
 			name,
-			role
+			role = 'user',
 		} = body;
 
 		try {
@@ -57,25 +39,28 @@ router.route('/')
 				error.status = 409;
 				throw error;
 			}
+			const password = await PasswordServ.hash(body.password);
 
 			const newUser = new User({
 				email,
-				role
+				role,
+				profiles: [
+					{
+						name,
+						provider: 'local',
+						password,
+						isEmailVerified: true,
+					}
+				]
 			});
 
 			const result = await newUser.save();
-			const userId = result.id;
-			const password = await PasswordServ.hash(body.password);
-			const profileData = {
-				userId,
-				name,
-				password,
-			};
-
-			const profile = new LocalProfile(profileData);
-			await profile.save();
+			const profiles = [];
+			for (const { password, ...profile } of result.profiles) {
+				profiles.push(profile);
+			}
+			result.profiles = profiles;
 			res.json(result);
-
 		} catch (error) {
 			next(error);
 		}
@@ -91,13 +76,10 @@ router.route('/')
 router.route('/:id')
 	.get(async (req, res, next) => {
 		const { id } = req.params;
-		const { profiles } = req.query;
+
 		try {
-			const user$ = User.findOne({ id }).lean().exec();
-			const requiredProfiles = getRequiredProfiles(id, profiles);
-			const [user, ...profilesList] = await Promise.all([user$, ...requiredProfiles]);
-			const resData = Object.assign({}, user, { profiles: profilesList });
-			res.json(resData);
+			const user = await User.findOne({ id }, projection);
+			res.json(user);
 		} catch (error) {
 			next(error);
 		}
