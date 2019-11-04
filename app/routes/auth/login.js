@@ -13,7 +13,7 @@ const {
     IncorrectPasswordError
 } = require('../../errors');
 
-// router.route('/')
+router.route('/')
 
 
 //     /**
@@ -26,18 +26,18 @@ const {
         const currentLogin = Date.now();
         const currentLoginProvider = 'local';
 
-//         const {
-//             email,
-//             password
-//         } = req.body;
+        //         const {
+        //             email,
+        //             password
+        //         } = req.body;
 
         try {
             const user = await User.findOne({ email, isDeleted: false, isActive: true }).exec();
 
-//             if (!user) {
-//                 const error = new UserNotFoundError();
-//                 return next(error);
-//             }
+            //             if (!user) {
+            //                 const error = new UserNotFoundError();
+            //                 return next(error);
+            //             }
 
             const profile = user.profiles.find(profile => profile.provider === 'local');
 

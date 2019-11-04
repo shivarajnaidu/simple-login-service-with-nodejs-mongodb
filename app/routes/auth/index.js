@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const loginRouter = require('./login');
 const signupRouter = require('./signup');
 const forgotPasswordRouter = require('./forgot-password');
