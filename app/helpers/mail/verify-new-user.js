@@ -17,19 +17,20 @@ function getTemplate(url) {
 
 
 async function send(otpToken, email) {
-  const otp = otpToken;
-  const params = new URLSearchParams({
-    otp,
-    verify: 'account',
-  });
+    const otp = otpToken;
+    const params = new URLSearchParams({
+        otp,
+        email,
+        verify: 'account'
+    });
 
-  const url = new URL('http://localhost:3000/api/auth/signup');
-  url.search = params.toString();
-  const html = getTemplate(url.href);
-  return SendMail.send(email, {
-    html,
-    subject: 'Email Verification',
-  });
+    const url = new URL('http://localhost:3000/api/auth/signup');
+    url.search = params.toString();
+    const html = getTemplate(url.href);
+    return SendMail.send(email, {
+        html,
+        subject: 'Email Verification'
+    });
 }
 
 

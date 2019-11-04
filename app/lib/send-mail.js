@@ -4,8 +4,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 async function send(to, mailOptions) {
   const defaultOptions = {
-    from: 'test@example.com',
-    subject: 'Test Email Subject',
+    from: 'admin@example.com',
+    subject: 'Message From example.com',
   };
 
   if (!to) {

@@ -6,14 +6,14 @@ const PasswordServ = require('./password');
 const errorHandlingMiddleware = require('./error-handling-middleware');
 const SendMail = require('./send-mail');
 const AuthServ = require('./auth');
-const OtpServ = require('./otp');
+const OtpServ = require('./send-otp');
 
 module.exports = {
-  // logger,
-  TokenServ,
-  OtpServ,
-  AuthServ,
-  PasswordServ,
-  SendMail,
-  errorHandlingMiddleware,
+	// logger,
+	TokenServ,
+	AuthServ,
+	PasswordServ,
+	SendMail,
+	errorHandlingMiddleware,
+	OtpServ,
 };

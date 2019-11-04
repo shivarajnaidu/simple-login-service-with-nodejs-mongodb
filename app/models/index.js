@@ -1,11 +1,13 @@
 const db = require('./db');
 const User = require('./user');
+const UserProfiles = require('./profiles');
 const UnVerifiedAccount = require('./unverified-account');
-const Otp = require('./otp');
+const OtpList = require('./otp-list');
 
 module.exports = {
-  db,
-  User,
-  UnVerifiedAccount,
-  Otp,
+	db,
+	User,
+	UserProfiles,
+	UnVerifiedAccount,
+	OtpList,
 };

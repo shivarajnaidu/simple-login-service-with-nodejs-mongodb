@@ -7,8 +7,8 @@ const options = {
 };
 
 const getRequiredFiledMessage = filed => {
-    const message = `${filed} Should Not Be Empty`;
-    return [true, message];
+  const message = `${filed} Should Not Be Empty`;
+  return [true, message];
 };
 
 
@@ -18,6 +18,7 @@ const UserSchema = new Schema({
   mobile: { type: String, required: getRequiredFiledMessage('Mobile'), trim: true, unique: true },
   role: { type: String, default: 'user', trim: true },
   isActive: { type: Boolean, default: true },
+  isDeleted: { type: Boolean, default: false },
   loginIp: { type: String, default: '' },
   lastLoginProvider: { type: String, default: '' },
   currentLoginProvider: { type: String, default: '' },

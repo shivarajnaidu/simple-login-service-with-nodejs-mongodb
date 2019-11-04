@@ -1,0 +1,232 @@
+{
+	"info": {
+		"_postman_id": "9a3443e0-7b4d-40cc-9607-b7578dc94bf6",
+		"name": "simple-login-service",
+		"description": "API Collection For Simple Login Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"_postman_id": "90ac8513-ac02-4234-882f-31afeaf902d5",
+			"name": "auth",
+			"item": [
+				{
+					"_postman_id": "5e721c8a-26cd-4208-891c-77751200bb3d",
+					"name": "/api/auth/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"shivarajnaidu@gmail.com\",\n    \"password\": \"testpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{HOSTNAME}}/api/auth/login",
+							"host": [
+								"{{HOSTNAME}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login API"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "7e2995aa-ad3b-4597-a725-c0e12dd96a05",
+					"name": "api/auth/signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"yuvaraj\",\n    \"email\": \"shivarajnaidu@gmail.com\",\n    \"password\": \"testpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{HOSTNAME}}/api/auth/signup",
+							"host": [
+								"{{HOSTNAME}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Signup API"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "677b2be1-f4a9-4580-8882-e1476e366cab",
+					"name": "api/auth/otp/:id",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "otp",
+									"value": "928151",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOSTNAME}}/api/auth/otp/898e8208-bef0-4109-8bd5-b4d1f1078bea",
+							"host": [
+								"{{HOSTNAME}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"otp",
+								"898e8208-bef0-4109-8bd5-b4d1f1078bea"
+							]
+						},
+						"description": "Verify New Account"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"_postman_id": "5bf50ed4-9d4d-4930-9d76-4eb20f9ca099",
+			"name": "users",
+			"item": [
+				{
+					"_postman_id": "56fb6cc5-1e9f-43be-9066-14707b414bc3",
+					"name": "/api/users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{HOSTNAME}}/api/users",
+							"host": [
+								"{{HOSTNAME}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "API to Retrive the list of users"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "6a48f75c-3696-44b2-9808-afb0186bbe24",
+					"name": "/api/users",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoaXZhcmFqbmFpZHVAZ21haWwuY29tIiwicHJvdmlkZXIiOiJsb2NhbCIsInVzZXJJZCI6ImM2NmZhZGFkLWZlMWUtNDE5YS05NDY2LTE3ZjFjZGFmMmQyNCIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTU3MDQ2NjIzNywiZXhwIjoxNTcwNDY5ODM3fQ.AAUamDtErkWNffeylkw594iKneiLvvjiMJL_2iYfXlY"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Yuvaraj",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "shivarajnaidu@outlook.com",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{HOSTNAME}}/api/users",
+							"host": [
+								"{{HOSTNAME}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "Create A New User"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a4aead62-d0e8-4a71-915f-fa9859cd85ff",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "4e612589-b1c4-4252-a595-9fe456727f88",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "9c9c30be-6e9f-4476-a9f2-e8b1862a0920",
+			"key": "HOSTNAME",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}

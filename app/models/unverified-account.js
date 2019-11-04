@@ -17,12 +17,8 @@ const UnVerifiedAccountSchema = new Schema({
   email: {
     type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true,
   },
-  mobile: {
-    type: String, trim: true, unique: true,
-  },
   password: { type: String, required: getRequiredFiledMessage('Password') },
   role: { type: String, default: 'user', trim: true },
-  countryCode: { type: String, default: '+91' },
 }, options);
 
 const UnVerifiedAccount = mongoose.model('UnVerifiedAccount', UnVerifiedAccountSchema);
