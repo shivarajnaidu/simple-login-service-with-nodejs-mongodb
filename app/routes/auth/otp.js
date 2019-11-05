@@ -1,6 +1,6 @@
 const express = require('express');
 const { User, UnVerifiedAccount, OtpList } = require('../../models');
-const { TokenServ } = require('../../lib');
+const { TokenServ, OtpServ } = require('../../lib');
 
 const router = express.Router();
 
@@ -53,6 +53,27 @@ const handlePasswordReset = async (otpDoc, res, next) => {
     next(error);
   }
 };
+
+
+router.route('/:id/resend')
+  .post(async (req, res, next) => {
+    try {
+      const otpResult = await OtpList.findOne({ id });
+      if (!otpResult) {
+        const error = new Error('Invalid OTP');
+        return next(error);
+      }
+
+      await OtpServ.sendOtp(otpResult.otp, { email });
+      res.json({
+        uid: otpResult.id,
+        message: 'Otp Sent To Your Registered Email',
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  });
 
 /**
  * Verify Otps
