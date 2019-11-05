@@ -9,9 +9,9 @@ const {
 
 router.route('/')
 
-/**
-       * Register New User
-       */
+  /**
+         * Register New User
+         */
 
   .post(async (req, res, next) => {
     const { body } = req;
@@ -28,6 +28,14 @@ router.route('/')
         const error = new UserAlreadyExistError();
         return next(error);
       }
+
+      /*
+      * remove the user from unverified accounts if he already tries to signup
+      * but haven't succeded (so that we can create a new unverified
+      *  doc and otp for new signup request with same email)
+      */
+
+      await UnVerifiedAccount.findOneAndDelete({ email });
 
       const password = await PasswordServ.hash(body.password);
       const newUser = new UnVerifiedAccount({
