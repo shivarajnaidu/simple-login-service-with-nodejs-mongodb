@@ -1,3 +1,5 @@
+'use strict';
+
 /* eslint-disable no-console */
 require('dotenv').config();
 const config = require('config');
