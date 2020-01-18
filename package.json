@@ -36,5 +36,10 @@
     "passport-google-oauth": "^2.0.0",
     "user-ip": "^1.0.1",
     "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0"
   }
 }

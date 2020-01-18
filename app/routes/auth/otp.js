@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const { User, UnVerifiedAccount, OtpList } = require('../../models');
 const { TokenServ, OtpServ } = require('../../lib');
@@ -34,7 +36,7 @@ const handleNewAccountVarification = async (otpDoc, res, next) => {
 const handlePasswordReset = async (otpDoc, res, next) => {
   try {
     const user = await User.findOne({ id: otpDoc.userId }).lean();
-    const profile = user.profiles.find(p => p.provider === 'local');
+    const profile = user.profiles.find((p) => p.provider === 'local');
 
     const tokenData = {
       email: user.email,
@@ -57,6 +59,11 @@ const handlePasswordReset = async (otpDoc, res, next) => {
 
 router.route('/:id/resend')
   .post(async (req, res, next) => {
+    const { id } = req;
+    const {
+      email,
+    } = req.body;
+
     try {
       const otpResult = await OtpList.findOne({ id });
       if (!otpResult) {
@@ -69,7 +76,6 @@ router.route('/:id/resend')
         uid: otpResult.id,
         message: 'Otp Sent To Your Registered Email',
       });
-
     } catch (error) {
       next(error);
     }

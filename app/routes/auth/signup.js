@@ -9,9 +9,9 @@ const {
 
 router.route('/')
 
-  /**
-         * Register New User
-         */
+/**
+  * Register New User
+  */
 
   .post(async (req, res, next) => {
     const { body } = req;

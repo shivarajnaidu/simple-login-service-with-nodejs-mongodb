@@ -1,10 +1,13 @@
+'use strict';
+
 const express = require('express');
+
 const router = express.Router();
 const loginRouter = require('./login');
 const signupRouter = require('./signup');
 const forgotPasswordRouter = require('./forgot-password');
 const resetPasswordRouter = require('./reset-password');
-const googleLoginRouter = require('./google-login');
+// const googleLoginRouter = require('./google-login');
 const otpRouter = require('./otp');
 
 router.use('/login', loginRouter);
