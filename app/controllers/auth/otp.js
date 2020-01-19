@@ -1,11 +1,7 @@
 'use strict';
 
-const express = require('express');
 const { User, UnVerifiedAccount, OtpList } = require('../../models');
 const { TokenServ, OtpServ } = require('../../lib');
-
-const router = express.Router();
-
 
 const handleNewAccountVarification = async (otpDoc, res, next) => {
   try {
@@ -56,68 +52,73 @@ const handlePasswordReset = async (otpDoc, res, next) => {
   }
 };
 
-
-router.route('/:id/resend')
-  .post(async (req, res, next) => {
-    const { id } = req;
-    const {
-      email,
-    } = req.body;
-
-    try {
-      const otpResult = await OtpList.findOne({ id });
-      if (!otpResult) {
-        const error = new Error('Invalid OTP');
-        return next(error);
-      }
-
-      await OtpServ.sendOtp(otpResult.otp, { email });
-      res.json({
-        uid: otpResult.id,
-        message: 'Otp Sent To Your Registered Email',
-      });
-    } catch (error) {
-      next(error);
-    }
-  });
-
 /**
- * Verify Otps
- */
+ * /:id/resend
+ *
+*/
 
-router.route('/:id')
-  .post(async (req, res, next) => {
-    const { id } = req.params;
+const resendOtp = async (req, res, next) => {
+  const { id } = req;
+  const {
+    email,
+  } = req.body;
 
-    const { otp } = req.body;
-    if (!otp) {
-      const error = new Error('Otp Should Not Be Empty');
+  try {
+    const otpResult = await OtpList.findOne({ id });
+    if (!otpResult) {
+      const error = new Error('Invalid OTP');
       return next(error);
     }
 
-    try {
-      const doc = await OtpList.findOne({ id });
-      if (!doc) {
-        const error = new Error('Invalid OTP');
-        return next(error);
-      }
+    await OtpServ.sendOtp(otpResult.otp, { email });
+    res.json({
+      uid: otpResult.id,
+      message: 'Otp Sent To Your Registered Email',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-      if (doc.otp !== otp) {
-        const error = new Error('Incorrect OTP');
-        return next(error);
-      }
 
-      if (doc.type === 'new_account_verification') {
-        handleNewAccountVarification(doc, res, next);
-      }
+/**
+ * Verify Otps /:id
+ */
+const verifyOtp = async (req, res, next) => {
+  const { id } = req.params;
 
-      if (doc.type === 'reset_password') {
-        handlePasswordReset(doc, res, next);
-      }
-    } catch (error) {
-      next(error);
+  const { otp } = req.body;
+  if (!otp) {
+    const error = new Error('Otp Should Not Be Empty');
+    return next(error);
+  }
+
+  try {
+    const doc = await OtpList.findOne({ id });
+    if (!doc) {
+      const error = new Error('Invalid OTP');
+      return next(error);
     }
-  });
+
+    if (doc.otp !== otp) {
+      const error = new Error('Incorrect OTP');
+      return next(error);
+    }
+
+    if (doc.type === 'new_account_verification') {
+      handleNewAccountVarification(doc, res, next);
+    }
+
+    if (doc.type === 'reset_password') {
+      handlePasswordReset(doc, res, next);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 
-module.exports = router;
+module.exports = {
+  resendOtp,
+  verifyOtp,
+};

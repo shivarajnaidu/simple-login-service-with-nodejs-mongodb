@@ -1,6 +1,6 @@
 'use strict';
 
-const uuid = require('uuid');
+const uuid = require('uuid/v4');
 
 class BadRequestError extends Error {
   constructor(message, status = 400) {
