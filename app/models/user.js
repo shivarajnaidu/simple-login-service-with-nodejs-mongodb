@@ -1,12 +1,14 @@
 'use strict';
+
 const uuid = require('uuid/v4');
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 const options = {
-  timestamps: true
+  timestamps: true,
 };
 
-const getRequiredFiledMessage = filed => {
+const getRequiredFiledMessage = (filed) => {
   const message = `${filed} Should Not Be Empty`;
   return [true, message];
 };
@@ -14,8 +16,12 @@ const getRequiredFiledMessage = filed => {
 
 const UserSchema = new Schema({
   id: { type: String, default: uuid },
-  email: { type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true },
-  mobile: { type: String, required: getRequiredFiledMessage('Mobile'), trim: true, unique: true },
+  email: {
+    type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true,
+  },
+  mobile: {
+    type: String, required: getRequiredFiledMessage('Mobile'), trim: true, unique: true,
+  },
   role: { type: String, default: 'user', trim: true },
   isActive: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false },
@@ -25,7 +31,7 @@ const UserSchema = new Schema({
   lastLogin: { type: Date, default: Date.now },
   lastFailedLogin: Date,
   currentLogin: { type: Date, default: Date.now },
-  profiles: []
+  profiles: [],
 }, options);
 
 
