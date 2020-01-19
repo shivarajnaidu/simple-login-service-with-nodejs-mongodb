@@ -3,6 +3,8 @@
 const uuid = require('uuid/v4');
 const mongoose = require('mongoose');
 
+const { USER, roles } = require('../constatnts/roles');
+
 const { Schema } = mongoose;
 const options = {
   timestamps: true,
@@ -15,14 +17,16 @@ const getRequiredFiledMessage = (filed) => {
 
 
 const UserSchema = new Schema({
-  id: { type: String, default: uuid },
+  id: { type: String, default: uuid, unique: true },
   email: {
     type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true,
   },
   mobile: {
     type: String, required: getRequiredFiledMessage('Mobile'), trim: true, unique: true,
   },
-  role: { type: String, default: 'user', trim: true },
+  role: {
+    type: String, enum: roles, default: USER, trim: true,
+  },
   isActive: { type: Boolean, default: true },
   isDeleted: { type: Boolean, default: false },
   loginIp: { type: String, default: '' },
@@ -31,9 +35,7 @@ const UserSchema = new Schema({
   lastLogin: { type: Date, default: Date.now },
   lastFailedLogin: Date,
   currentLogin: { type: Date, default: Date.now },
-  profiles: [],
 }, options);
 
 
-const User = mongoose.model('User', UserSchema);
-module.exports = User;
+module.exports = mongoose.model('User', UserSchema);

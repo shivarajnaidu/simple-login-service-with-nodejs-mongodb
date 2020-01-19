@@ -23,5 +23,5 @@ const OtpListSchema = new Schema({
 }, options);
 
 OtpListSchema.index({ createdAt: 1 }, { expireAfterSeconds: 900 });
-const Otp = mongoose.model('Otp', OtpListSchema);
-module.exports = Otp;
+
+module.exports = mongoose.model('Otp', OtpListSchema);
