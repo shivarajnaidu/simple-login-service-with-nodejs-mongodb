@@ -17,7 +17,11 @@ router.route('/otp/:id/resend')
 router.route('/otp/:id')
   .post(authController.verifyOtp);
 
-router.use('/forgot-password', authController.forgotPassword);
-router.use('/reset-password', authController.resetPassword);
+
+router.route('/forgot-password')
+  .post(authController.forgotPassword);
+
+router.route('/reset-password')
+  .post(authController.resetPassword);
 
 module.exports = router;
