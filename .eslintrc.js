@@ -12,11 +12,20 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2019,
+    sourceType: 'script',
+    ecmaFeatures: {
+      modules: false
+    }
   },
   rules: {
-    'strict': 'off',
+    'strict': ['error', 'global'],
     'consistent-return': 'off',
+    'no-underscore-dangle': 'off',
     'max-classes-per-file': 'off',
+    'no-restricted-syntax': [
+      'off',
+      'ForOfStatement'
+    ],
   },
 };
