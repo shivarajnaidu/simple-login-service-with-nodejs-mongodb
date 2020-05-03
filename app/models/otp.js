@@ -1,8 +1,9 @@
-/* eslint-disable no-plusplus */
+'use strict';
 
-
-const uuid = require('uuid');
+const { v4: uuid } = require('uuid');
 const mongoose = require('mongoose');
+const shortId = require('shortid');
+const { otpTypes } = require('../constants/otp-types');
 
 const { Schema } = mongoose;
 const options = {
@@ -16,10 +17,10 @@ const getRequiredFiledMessage = (filed) => {
 };
 
 const OtpListSchema = new Schema({
-  id: { type: String, default: uuid },
+  id: { type: String, default: uuid, unique: true },
   userId: { type: String, required: getRequiredFiledMessage('User ID') },
-  otp: { type: String, required: getRequiredFiledMessage('OTP') },
-  type: { type: String, required: getRequiredFiledMessage('OTP type') },
+  otp: { type: String, default: shortId.generate, required: getRequiredFiledMessage('OTP') },
+  type: { type: String, enum: otpTypes, required: getRequiredFiledMessage('OTP type') },
 }, options);
 
 OtpListSchema.index({ createdAt: 1 }, { expireAfterSeconds: 900 });

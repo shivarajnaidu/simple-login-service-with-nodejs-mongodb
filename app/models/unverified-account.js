@@ -1,5 +1,9 @@
-const uuid = require('uuid');
+'use strict';
+
+const { v4: uuid } = require('uuid');
 const mongoose = require('mongoose');
+
+const { roles, USER } = require('../constants/roles');
 
 const { Schema } = mongoose;
 const options = {
@@ -12,14 +16,34 @@ const getRequiredFiledMessage = (filed) => {
 };
 
 const UnVerifiedAccountSchema = new Schema({
-  id: { type: String, default: uuid },
-  name: { type: String, required: getRequiredFiledMessage('Name'), trim: true },
-  email: {
-    type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true,
+  id: { type: String, default: uuid, unique: true },
+  name: {
+    type: String,
+    required: getRequiredFiledMessage('Name'),
+    trim: true,
   },
-  password: { type: String, required: getRequiredFiledMessage('Password') },
-  role: { type: String, default: 'user', trim: true },
+  email: {
+    type: String,
+    required: getRequiredFiledMessage('Email'),
+    trim: true,
+    unique: true,
+  },
+  mobile: {
+    type: String,
+    required: getRequiredFiledMessage('Mobile'),
+    trim: true,
+    unique: true,
+  },
+  role: {
+    type: String,
+    enum: roles,
+    default: USER,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: getRequiredFiledMessage('Password'),
+  },
 }, options);
 
-const UnVerifiedAccount = mongoose.model('UnVerifiedAccount', UnVerifiedAccountSchema);
-module.exports = UnVerifiedAccount;
+module.exports = mongoose.model('UnVerifiedAccount', UnVerifiedAccountSchema);

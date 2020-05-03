@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const config = require('config');
 
-const dbURL = config.get('db.uri');
+const dbURL = config.get('DB_URL');
 // console.log(dbURL)
 
 

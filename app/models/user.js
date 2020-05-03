@@ -1,9 +1,9 @@
 'use strict';
 
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 const mongoose = require('mongoose');
 
-const { USER, roles } = require('../constatnts/roles');
+const { roles, USER } = require('../constants/roles');
 
 const { Schema } = mongoose;
 const options = {
@@ -18,16 +18,36 @@ const getRequiredFiledMessage = (filed) => {
 
 const UserSchema = new Schema({
   id: { type: String, default: uuid, unique: true },
+  name: {
+    type: String,
+    required: getRequiredFiledMessage('Name'),
+    trim: true,
+  },
   email: {
-    type: String, required: getRequiredFiledMessage('Email'), trim: true, unique: true,
+    type: String,
+    required: getRequiredFiledMessage('Email'),
+    trim: true,
+    unique: true,
   },
   mobile: {
-    type: String, required: getRequiredFiledMessage('Mobile'), trim: true, unique: true,
+    type: String,
+    required: getRequiredFiledMessage('Mobile'),
+    trim: true,
+    unique: true,
   },
   role: {
-    type: String, enum: roles, default: USER, trim: true,
+    type: String,
+    enum: roles,
+    default: USER,
+    trim: true,
   },
-  isActive: { type: Boolean, default: true },
+  password: {
+    type: String,
+    required: getRequiredFiledMessage('Password'),
+  },
+  isEmailVerified: { type: Boolean, default: false },
+  isMobileVerified: { type: Boolean, default: false },
+  isBlocked: { type: Boolean, default: false },
   isDeleted: { type: Boolean, default: false },
   loginIp: { type: String, default: '' },
   lastLoginProvider: { type: String, default: '' },

@@ -1,6 +1,7 @@
 'use strict';
 
-const User = require('../models/user');
+const User = require('../../models/user');
+
 
 const createUser = async (req, res, next) => {
   try {
@@ -13,40 +14,37 @@ const createUser = async (req, res, next) => {
 };
 
 
-const getUser = async (req, res, next) => {
-  const { id } = req.params;
+const getUsers = async (req, res, next) => {
   try {
-    const result = await User.findOne({ id });
+    const result = await User.find({}, { password: false }).lean();
     res.json(result);
   } catch (error) {
     next(error);
   }
 };
 
-const getUserList = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
   try {
-    const results = await User.find({});
-    res.json(results);
+    const result = await User.findOne({ id: req.params.id }, { password: false });
+    res.json(result);
   } catch (error) {
     next(error);
   }
 };
 
 const updateUser = async (req, res, next) => {
-  const { id } = req.params;
-
   try {
-    const result = await User.findOneAndUpdate({ id }, req.body, { new: true });
+    const result = await User.findOneAndUpdate({ id: req.params.id }, req.body, { new: true });
     res.json(result);
   } catch (error) {
     next(error);
   }
 };
 
+
 const deleteUser = async (req, res, next) => {
-  const { id } = req.params;
   try {
-    const result = await User.findByIdAndRemove({ id });
+    const result = await User.findOneAndRemove({ id: req.params.id });
     res.json(result);
   } catch (error) {
     next(error);
@@ -55,8 +53,8 @@ const deleteUser = async (req, res, next) => {
 
 module.exports = {
   createUser,
-  getUser,
-  getUserList,
+  getUsers,
+  getUserById,
   updateUser,
   deleteUser,
 };

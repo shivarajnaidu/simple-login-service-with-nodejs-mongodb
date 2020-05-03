@@ -16,6 +16,7 @@ module.exports = {
   },
   rules: {
     'strict': 'off',
-    'consistent-return': 'off'
+    'consistent-return': 'off',
+    'max-classes-per-file': 'off',
   },
 };

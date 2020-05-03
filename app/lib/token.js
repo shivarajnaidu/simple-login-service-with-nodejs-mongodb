@@ -1,10 +1,8 @@
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
-const {
-  secret: jwtSecret,
-  tokenExpirePeriod,
-} = config.get('jwt');
+const tokenExpirePeriod = config.get('JWT_LIFETIME');
+const jwtSecret = config.get('JWT_SECRET');
 
 async function generateToken(payLoad, expiresIn = tokenExpirePeriod) {
   const isObject = (typeof payLoad === 'object');

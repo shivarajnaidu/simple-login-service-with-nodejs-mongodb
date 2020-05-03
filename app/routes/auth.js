@@ -1,27 +1,13 @@
 'use strict';
 
 const express = require('express');
+const authCtrl = require('../controllers/auth');
 
 const router = express.Router();
-const authController = require('../controllers/auth');
 
-router.route('/signup')
-  .post(authController.signup);
-
-router.route('/login')
-  .post(authController.login);
-
-router.route('/otp/:id/resend')
-  .post(authController.resendOtp);
-
-router.route('/otp/:id')
-  .post(authController.verifyOtp);
-
-
-router.route('/forgot-password')
-  .post(authController.forgotPassword);
-
-router.route('/reset-password')
-  .post(authController.resetPassword);
+router.post('/signup', authCtrl.signup);
+router.post('/login', authCtrl.login);
+router.post('/verification/email', authCtrl.verifyEmail);
+router.post('/verification/mobile', authCtrl.verifyMobile);
 
 module.exports = router;

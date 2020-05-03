@@ -1,60 +1,44 @@
 'use strict';
 
-const { User } = require('../../models');
-const { PasswordServ, TokenServ } = require('../../lib');
-
-const {
-  EmailNotVerifiedError,
-  IncorrectPasswordError,
-} = require('../../errors');
-
+const User = require('../../models/user');
+const { generate: generateToken } = require('../../lib/token');
+const { match: matchPassword } = require('../../lib/password');
+const { InvalidCredidentialsError, EmailNotVerifiedError } = require('../../constants/errors');
 
 const login = async (req, res, next) => {
-  // const loginIp = userIP(req);
-  // const currentLogin = Date.now();
-  // const currentLoginProvider = 'local';
-
-  const {
-    email,
-    password,
-  } = req.body;
-
   try {
-    const user = await User.findOne({ email, isDeleted: false, isActive: true }).exec();
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      const error = new InvalidCredidentialsError();
+      return next(error);
+    }
 
-    //             if (!user) {
-    //                 const error = new UserNotFoundError();
-    //                 return next(error);
-    //             }
-
-    // eslint-disable-next-line no-shadow
-    const profile = user.profiles.find((profile) => profile.provider === 'local');
-
-    // If Email Is Not Verified
-    if (profile && !profile.isEmailVerified) {
-      Object.assign(user, { lastFailedLogin: Date.now() });
-      await user.save();
+    if (!user.isEmailVerified) {
       const error = new EmailNotVerifiedError();
       return next(error);
     }
 
-    const isCorrectPassword = await PasswordServ.match(password, profile.password);
+    const isPasswordMatched = await matchPassword(req.body.password, user.password);
 
-    if (!isCorrectPassword) {
-      const error = new IncorrectPasswordError();
+    if (!isPasswordMatched) {
+      const error = new InvalidCredidentialsError();
       return next(error);
     }
 
-    const tokenData = {
-      email,
-      provider: profile.provider,
+    const tokenPayload = {
       userId: user.id,
       role: user.role,
-      profileId: profile.id,
     };
 
-    const token = await TokenServ.generate(tokenData);
-    res.json({ token });
+    const token = await generateToken(tokenPayload);
+    const resData = {
+      token,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
+
+    res.json(resData);
   } catch (error) {
     next(error);
   }

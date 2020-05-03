@@ -1,45 +1,35 @@
 {
-  "name": "simple-login-service-with-nodejs-mongodb",
+  "name": "simple-login-service",
   "version": "1.0.0",
-  "description": "Simple Login Service Using NodeJs And MongoDB",
+  "description": "Simple Login Service With Node And MongoDb",
   "main": "index.js",
   "scripts": {
-    "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shivarajnaidu/simple-login-service-with-nodejs-mongodb.git"
-  },
   "keywords": [
-    "login"
+    "nodejs",
+    "mongodb"
   ],
   "author": "Yuvaraj V",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/shivarajnaidu/simple-login-service-with-nodejs-mongodb/issues"
-  },
-  "homepage": "https://github.com/shivarajnaidu/simple-login-service-with-nodejs-mongodb#readme",
   "dependencies": {
-    "@sendgrid/mail": "^6.4.0",
-    "bcrypt": "^3.0.7",
+    "@sendgrid/mail": "^7.1.0",
+    "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
-    "config": "^3.2.5",
+    "config": "^3.3.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "helmet": "^3.21.2",
+    "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.8.9",
-    "morgan": "^1.9.1",
-    "passport": "^0.4.1",
-    "passport-google-oauth": "^2.0.0",
-    "user-ip": "^1.0.1",
-    "uuid": "^3.4.0"
+    "mongoose": "^5.9.11",
+    "morgan": "^1.10.0",
+    "shortid": "^2.2.15",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.0"
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2"
   }
 }

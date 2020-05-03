@@ -1,7 +1,0 @@
-'use strict';
-
-const NEW_ACCOUNT_VERIFICATION = 'NEW_ACCOUNT_VERIFICATION';
-
-module.exports = {
-  NEW_ACCOUNT_VERIFICATION,
-};
