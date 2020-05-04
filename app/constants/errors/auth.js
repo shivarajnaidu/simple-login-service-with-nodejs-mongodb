@@ -19,7 +19,7 @@ class EmailNotVerifiedError extends Error {
 }
 
 class PermissionDeniedError extends Error {
-  constructor(message = 'You Don\'t Have Permission To Proceed', status = 403) {
+  constructor(message = 'You Don\'t Have Permission To Perform This Operation', status = 403) {
     super(message);
     this.status = status;
     this.uid = uuid();

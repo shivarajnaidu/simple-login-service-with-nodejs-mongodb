@@ -3,28 +3,30 @@
 const express = require('express');
 
 const userCtrl = require('../controllers/users');
+const { authorize } = require('../lib/auth');
+const { ADMIN } = require('../constants/roles');
 
 const router = express.Router();
 
 router.route('/')
 
   // Get List Of Users
-  .get(userCtrl.getUsers)
+  .get(authorize([ADMIN]), userCtrl.getUsers)
 
   // Create New User
-  .post(userCtrl.createUser);
+  .post(authorize([ADMIN]), userCtrl.createUser);
 
 
 router.route('/:id')
 
   // Get User
-  .get(userCtrl.getUserById)
+  .get(authorize(), userCtrl.getUserById)
 
   // Update User
-  .put(userCtrl.updateUser)
+  .put(authorize(), userCtrl.updateUser)
 
   // Delete User
-  .delete(userCtrl.deleteUser);
+  .delete(authorize(ADMIN), userCtrl.deleteUser);
 
 
 module.exports = router;

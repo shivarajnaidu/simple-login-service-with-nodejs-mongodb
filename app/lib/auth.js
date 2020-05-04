@@ -13,7 +13,7 @@ function hasPermission(allowedRoles, actualRole) {
   return allowedRoles.includes(actualRole);
 }
 
-function authorize(allowedRoles) {
+function authorize(allowedRoles = []) {
   return async (req, res, next) => {
     const token = (req.headers.authorization || req.headers.Authorization || '')
       .split('Bearer ').pop();
@@ -30,6 +30,12 @@ function authorize(allowedRoles) {
       const decodedData = await TokenServ.verify(token);
       req.tokenData = decodedData;
       const actualRole = decodedData.role;
+
+      // If no roles specified anyone loggedin can access
+      if (allowedRoles.length === 0) {
+        return next();
+      }
+
       if (!hasPermission(allowedRoles, actualRole)) {
         const error = new PermissionDeniedError();
         return next(error);
