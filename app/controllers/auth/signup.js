@@ -9,6 +9,8 @@ const { hash: hashPassword } = require('../../lib/password');
 const signup = async (req, res, next) => {
   try {
     req.body.password = await hashPassword(req.body.password);
+    delete req.body.isEmailVerified;
+    delete req.body.isMobileVerified;
     let user = new User(req.body);
     user = await user.save();
     let otp = new OTP({ userId: user.id, type: VERIFY_EMAIL });
