@@ -15,7 +15,6 @@ const getRequiredFiledMessage = (filed) => {
   return [true, message];
 };
 
-
 const UserSchema = new Schema({
   id: { type: String, default: uuid, unique: true },
   name: {
@@ -56,6 +55,5 @@ const UserSchema = new Schema({
   lastFailedLogin: Date,
   currentLogin: { type: Date, default: Date.now },
 }, options);
-
 
 module.exports = mongoose.model('User', UserSchema);
