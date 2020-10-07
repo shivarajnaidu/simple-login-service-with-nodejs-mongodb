@@ -6,6 +6,11 @@ const config = require('config');
 const dbURL = config.get('DB_URL');
 // console.log(dbURL)
 
+if (!dbURL) {
+  // eslint-disable-next-line no-console
+  console.error('DB URL empty');
+  process.exit(1);
+}
 
 async function connectToDB() {
   try {
