@@ -13,6 +13,9 @@ if (!dbURL) {
 }
 
 async function connectToDB() {
+  // eslint-disable-next-line no-console
+  console.log(`Connecting to Databse ${dbURL}`);
+
   try {
     await mongoose.connect(dbURL, {
       useNewUrlParser: true,
@@ -31,12 +34,10 @@ async function connectToDB() {
 
 connectToDB();
 
-
 const db = mongoose.connection;
 // db.on('error', console.error('connection error while connecting to DB'));
 // db.once('open', function() {
 // console.log('Succefully Connected To DB');
 // });
-
 
 module.exports = db;
