@@ -5,7 +5,6 @@ const config = require('config');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
 require('./app/db');
@@ -19,8 +18,8 @@ app.use(cors());
 app.use(morgan('tiny'));
 // app.use(express.static('uploads'));
 // app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 require('./app/routes')(app);
 
