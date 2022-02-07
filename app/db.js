@@ -17,11 +17,7 @@ async function connectToDB() {
   console.log(`Connecting to Databse ${dbURL}`);
 
   try {
-    await mongoose.connect(dbURL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-    });
+    await mongoose.connect(dbURL);
 
     // eslint-disable-next-line no-console
     console.log('Succefully Connected To DB');
