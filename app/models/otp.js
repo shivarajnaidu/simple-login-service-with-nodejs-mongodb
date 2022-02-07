@@ -2,7 +2,7 @@
 
 const { v4: uuid } = require('uuid');
 const mongoose = require('mongoose');
-const shortId = require('shortid');
+const { nanoid } = require('nanoid');
 const { otpTypes } = require('../constants/otp-types');
 
 const { Schema } = mongoose;
@@ -18,7 +18,7 @@ const getRequiredFiledMessage = (filed) => {
 const OtpListSchema = new Schema({
   id: { type: String, default: uuid, unique: true },
   userId: { type: String, required: getRequiredFiledMessage('User ID') },
-  otp: { type: String, default: shortId.generate, required: getRequiredFiledMessage('OTP') },
+  otp: { type: String, default: () => nanoid(10), required: getRequiredFiledMessage('OTP') },
   type: { type: String, enum: otpTypes, required: getRequiredFiledMessage('OTP type') },
 }, options);
 
